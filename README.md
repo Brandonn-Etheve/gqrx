@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.org/Brandonn-Etheve/gqrx.svg?branch=remotecontrol-dev)](https://travis-ci.org/Brandonn-Etheve/gqrx)
+
 Gqrx
 ====
 
