@@ -100,6 +100,7 @@ signals:
     void newSquelchLevel(double level);
     void startAudioRecorderEvent();
     void stopAudioRecorderEvent();
+    void DSP_triggered(bool value);
 
 private slots:
     void acceptConnection();
@@ -135,6 +136,8 @@ private:
     QString     cmd_set_freq(QStringList cmdlist);
     QString     cmd_get_mode();
     QString     cmd_set_mode(QStringList cmdlist);
+    QString     cmd_get_receiverStatus();
+    QString     cmd_set_receiverStatus(QStringList cmdlist);
     QString     cmd_get_level(QStringList cmdlist);
     QString     cmd_set_level(QStringList cmdlist);
     QString     cmd_get_func(QStringList cmdlist);

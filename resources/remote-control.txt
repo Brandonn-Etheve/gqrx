@@ -1,6 +1,10 @@
 Remote control protocol.
 
 Supported commands:
+ d
+    Get DSP status (return 'ON' or 'OFF')
+ D <status>
+    Set dsp status ('ON' or 'OFF' to <status>
  f
     Get frequency [Hz]
  F <frequency>

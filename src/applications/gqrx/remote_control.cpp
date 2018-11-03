@@ -215,6 +215,10 @@ void RemoteControl::startRead()
         answer = cmd_set_freq(cmdlist);
     else if (cmd == "m")
         answer = cmd_get_mode();
+    else if (cmd == "D")
+        answer = cmd_set_receiverStatus(cmdlist);
+    else if (cmd == "d")
+        answer = cmd_get_receiverStatus();
     else if (cmd == "M")
         answer = cmd_set_mode(cmdlist);
     else if (cmd == "l")
@@ -562,6 +566,25 @@ QString RemoteControl::cmd_set_mode(QStringList cmdlist)
         }
     }
     return answer;
+}
+/*Get receiver satus (DSP on or off)*/
+QString RemoteControl::cmd_get_receiverStatus(){
+
+    return (RemoteControl::receiver_running) ?  QString("ON\n"):QString("OFF\n");
+}
+
+/*set receiver satus (DSP on or off)*/
+QString RemoteControl::cmd_set_receiverStatus(QStringList cmdlist){
+
+    QString status = cmdlist.value(1, "");
+    if(status == "ON"){
+        emit DSP_triggered(true);
+    }else if(status == "OFF"){
+        emit DSP_triggered(false);
+    }else{
+        return QString("RPRT 1\n");
+    }
+    return QString("RPRT 0\n");
 }
 
 /* Get level */
