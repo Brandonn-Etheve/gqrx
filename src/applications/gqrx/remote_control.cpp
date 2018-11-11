@@ -215,10 +215,6 @@ void RemoteControl::startRead()
         answer = cmd_set_freq(cmdlist);
     else if (cmd == "m")
         answer = cmd_get_mode();
-    else if (cmd == "D")
-        answer = cmd_set_receiverStatus(cmdlist);
-    else if (cmd == "d")
-        answer = cmd_get_receiverStatus();
     else if (cmd == "M")
         answer = cmd_set_mode(cmdlist);
     else if (cmd == "l")
@@ -590,25 +586,6 @@ QString RemoteControl::cmd_set_mode(QStringList cmdlist)
     }
     return answer;
 }
-/*Get receiver satus (DSP on or off)*/
-QString RemoteControl::cmd_get_receiverStatus(){
-
-    return (RemoteControl::receiver_running) ?  QString("ON\n"):QString("OFF\n");
-}
-
-/*set receiver satus (DSP on or off)*/
-QString RemoteControl::cmd_set_receiverStatus(QStringList cmdlist){
-
-    QString status = cmdlist.value(1, "");
-    if(status == "ON"){
-        emit DSP_triggered(true);
-    }else if(status == "OFF"){
-        emit DSP_triggered(false);
-    }else{
-        return QString("RPRT 1\n");
-    }
-    return QString("RPRT 0\n");
-}
 
 /* Get level */
 QString RemoteControl::cmd_get_level(QStringList cmdlist)
@@ -706,9 +683,11 @@ QString RemoteControl::cmd_get_func(QStringList cmdlist)
     QString func = cmdlist.value(1, "");
 
     if (func == "?")
-        answer = QString("RECORD\n");
+        answer = QString("RECORD\nDSP\n");
     else if (func.compare("RECORD", Qt::CaseInsensitive) == 0)
         answer = QString("%1\n").arg(audio_recorder_status);
+    else if (func.compare("DSP", Qt::CaseInsensitive) == 0)
+        answer = QString("%1\n").arg(receiver_running);
     else
         answer = QString("RPRT 1\n");
 
@@ -725,7 +704,7 @@ QString RemoteControl::cmd_set_func(QStringList cmdlist)
 
     if (func == "?")
     {
-        answer = QString("RECORD\n");
+        answer = QString("RECORD\nDSP\n");
     }
     else if ((func.compare("RECORD", Qt::CaseInsensitive) == 0) && ok)
     {
@@ -742,6 +721,15 @@ QString RemoteControl::cmd_set_func(QStringList cmdlist)
             else
                 emit stopAudioRecorderEvent();
         }
+    }
+    else if ((func.compare("DSP", Qt::CaseInsensitive) == 0) && ok)
+    {
+        if (status)
+            emit DSP_triggered(true);
+        else
+            emit DSP_triggered(false);
+
+        answer = QString("RPRT 0\n");
     }
     else
     {
