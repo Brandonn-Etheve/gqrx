@@ -188,6 +188,7 @@ MainWindow::MainWindow(const QString cfgfile, bool edit_conf, QWidget *parent) :
     connect(uiDockInputCtl, SIGNAL(lnbLoChanged(double)), this, SLOT(setLnbLo(double)));
     connect(uiDockInputCtl, SIGNAL(lnbLoChanged(double)), remote, SLOT(setLnbLo(double)));
     connect(uiDockInputCtl, SIGNAL(gainChanged(QString, double)), this, SLOT(setGain(QString,double)));
+    connect(uiDockInputCtl, SIGNAL(gainChanged(QString, double)), remote, SLOT(setGain(QString,double)));
     connect(uiDockInputCtl, SIGNAL(autoGainChanged(bool)), this, SLOT(setAutoGain(bool)));
     connect(uiDockInputCtl, SIGNAL(freqCorrChanged(double)), this, SLOT(setFreqCorr(double)));
     connect(uiDockInputCtl, SIGNAL(iqSwapChanged(bool)), this, SLOT(setIqSwap(bool)));
@@ -277,6 +278,8 @@ MainWindow::MainWindow(const QString cfgfile, bool edit_conf, QWidget *parent) :
     connect(remote, SIGNAL(stopAudioRecorderEvent()), uiDockAudio, SLOT(stopAudioRecorder()));
     connect(ui->plotter, SIGNAL(newFilterFreq(int, int)), remote, SLOT(setPassband(int, int)));
     connect(remote, SIGNAL(newPassband(int)), this, SLOT(setPassband(int)));
+    connect(remote, SIGNAL(gainChanged(QString, double)), uiDockInputCtl, SLOT(setGain(QString,double)));
+    connect(remote, SIGNAL(DSP_triggered(bool)), this, SLOT(on_actionDSP_triggered(bool)));
 
     rds_timer = new QTimer(this);
     connect(rds_timer, SIGNAL(timeout()), this, SLOT(rdsTimeout()));
@@ -789,6 +792,7 @@ void MainWindow::updateGainStages(bool read_from_device)
     }
 
     uiDockInputCtl->setGainStages(gain_list);
+    remote->setGainStages(gain_list);
 }
 
 /**
@@ -1694,7 +1698,8 @@ void MainWindow::setPeakDetection(bool enabled)
  * @param checked Flag indicating whether DSP processing should be ON or OFF.
  *
  * This slot is executed when the actionDSP is toggled by the user. This can
- * either be via the menu bar or the "power on" button in the main toolbar.
+ * either be via the menu bar or the "power on" button in the main toolbar or
+ * by remote control.
  */
 void MainWindow::on_actionDSP_triggered(bool checked)
 {
@@ -1745,6 +1750,9 @@ void MainWindow::on_actionDSP_triggered(bool checked)
 
         ui->plotter->setRunningState(false);
     }
+
+    ui->actionDSP->setChecked(checked); //for remote control
+
 }
 
 /**

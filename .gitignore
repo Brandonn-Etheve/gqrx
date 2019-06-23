@@ -1,5 +1,7 @@
 build/
 builds/
+cmake-build-debug/
+.idea
 Makefile
 gqrx.pro.user*
 *.o
